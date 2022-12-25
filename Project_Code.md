@@ -114,6 +114,37 @@ The project utilises 2 microntroller boards to realise the face detection and RC
     }
 
 ```
+3. The following code implements the same fucntionality but removes the gesture control and et user control the car using the keyboardof their machine. The ```W``` key moves the car forward, ```s``` backwards and ```F``` to stop.
+```
+    while (1) {
 
+    char c = getchar_timeout_us (2000);
+
+    if(c== 'w')
+    {
+    gpio_put(OUTER_FWD, 1);
+    gpio_put(OUTER_BCK, 0);
+    gpio_put(INNER_FWD, 0);
+    gpio_put(INNER_BCK, 1);
+    }
+    else if(c== 's')
+    {
+    gpio_put(OUTER_FWD, 1);
+    gpio_put(OUTER_BCK, 1);
+    gpio_put(INNER_FWD, 0);
+    gpio_put(INNER_BCK, 0);
+    }
+    else if(c== 'f')
+    {
+    gpio_put(OUTER_FWD, 0);
+    gpio_put(OUTER_BCK, 0);
+    gpio_put(INNER_FWD, 0);
+
+    gpio_put(INNER_BCK, 0);
+    }
+
+    }
+}
+```
 
 
