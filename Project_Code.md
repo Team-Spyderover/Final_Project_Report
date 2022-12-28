@@ -148,7 +148,7 @@ The project utilises 2 microntroller boards to realise the face detection and RC
 ```
 ### Code for generation of toggle signal to control QTPY from PICO4ML
 
-We adapted the code of ```mainfucntions.cpp``` in Pi inbuild person detection libraries to generate a toggle signal on pin 21 of pico4ml as soon as the score fo person face reaches 75 percent.
+We adapted the code of ```mainfunctions.cpp``` in Pi inbuild person detection libraries to generate a toggle signal on pin 21 of pico4ml as soon as the score fo person face reaches 75 percent.
 
 ```
 #include "main_functions.h"
