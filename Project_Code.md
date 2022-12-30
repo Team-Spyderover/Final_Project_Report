@@ -114,7 +114,7 @@ The project utilises 2 microntroller boards to realise the face detection and RC
     }
 
 ```
-3. The following code implements the same fucntionality but removes the gesture control and et user control the car using the keyboardof their machine. The ```W``` key moves the car forward, ```s``` backwards and ```F``` to stop.
+3. The following code implements the same functionality but removes the gesture control and let user control the car using the keyboardof their machine. The ```W``` key moves the car forward, ```s``` backwards and ```F``` to stop.
 ```
     while (1) {
 
@@ -355,6 +355,31 @@ void loop() {
 #endif
   TF_LITE_REPORT_ERROR(error_reporter, "**********");
 }
+```
+
+### Offloading to PIO
+
+The incoming_signal toggle coming from PICO4ML board is a blocking statement for the functionality of our RP2040 QtPy which controls the RC circuitry of the remote control. Thus, to free up the processor, this control signal is fetched through PIO instead of the normal GPIO and directly used in the program.
+
+```
+
+.program input
+set pins, 0  ; Setting the pin direction to input
+
+loop:
+  in pins, 32 ; The input is being read continously inside the loop through GPIO into the ISR 32 bits at a time
+  jmp loop
+
+
+% c-sdk {
+static inline void input_program_init(PIO pio, uint sm, uint offset, uint pin) {
+   pio_gpio_init(pio, pin);
+   pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
+   pio_sm_config c = input_program_get_default_config(offset);
+   sm_config_set_sideset_pins(&c, pin);
+   pio_sm_init(pio, sm, offset, &c);
+}
+%}
 ```
 
 
