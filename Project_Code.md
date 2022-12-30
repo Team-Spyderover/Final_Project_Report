@@ -19,6 +19,9 @@ Developer Visual Studio Code
 The project utilises 2 microntroller boards to realise the face detection and RC control functionality. The RP2040 QTPY board controllers the rc remote through analog voltages. The RP2040 PICO4ML board is primarily used to implement face detection functionality and generate the control signal to toggle QTPY.
 
 
+![WhatsApp Image 2022-12-30 at 00 19 16](https://user-images.githubusercontent.com/23244847/210039366-98ed0a18-cee8-42cf-ac72-204e229a8e43.jpg)
+
+
 ### Code Breakdown for Control of RC circuitry and integration with IMU for gesture control
 
 1. The following ```#define``` statements declare the various I/O of the RP2040 that control the rc circuit of the remote control. The ```OUTER_FWD_PIN 24```, ```OUTER_BCK_PIN 4```, ```INNER_FWD_PIN 6```, ```INNER_BCK_PIN 25``` are used to declare the GPIO that will generate the analog signal to mimic the button of the RC circuit. THey generate 3.3V and -3.3V to implement forward and backward motion on the car. The name of the pin indicate the particular wheel it is controlling. The 
