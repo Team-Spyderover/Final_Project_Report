@@ -361,6 +361,9 @@ void loop() {
 
 The incoming_signal toggle coming from PICO4ML board is a blocking statement for the functionality of our RP2040 QtPy which controls the RC circuitry of the remote control. Thus, to free up the processor, this control signal is fetched through PIO instead of the normal GPIO and directly used in the program.
 
+1. The in() function in pio_assembly fetches data from the specifeid pin in the main program and pusshes the data into the ISR 32 bits at time. Since, we are working in boolean input, we populate the entire register with same value.
+2. Although the value of control is being used one, the data is being read continously incase user wants an active person detection ON/OFF functionality, meaning , the remote is on only for the time a face is bein detected.
+3. There is also the C - helper function, which links our .pio file to the main C code.
 ```
 
 .program input
