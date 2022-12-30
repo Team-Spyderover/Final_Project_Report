@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 #include "hardware/gpio.h"
@@ -30,11 +29,6 @@
 #define Z_AXIS_PIN 27
 
 #define CONTROL_SIGNAL 20
-#define MOTOR 5
-
-void moveW(){
-    
-}
 
 int main() {
 
@@ -61,7 +55,7 @@ int main() {
     gpio_set_dir(INNER_FWD, GPIO_OUT);
     gpio_set_dir(INNER_BCK, GPIO_OUT);
 
-    gpio_set_dir(incoming_signal, GPIO_IN);
+    //gpio_set_dir(incoming_signal, GPIO_IN);
 
     stdio_init_all();
     adc_init();
@@ -76,9 +70,20 @@ int main() {
     float x;
     float y;
     float z;
+    int temp = 0;
+
+    PIO pio = pio0;
+    int sm = 0;
+    uint offset = pio_add_program(pio, &input_program);
+    input_program_init(pio, sm, offset, incoming_signal);
 
     while (1) {
-        if(gpio_get(incoming_signal)){
+
+        if(pio_sm_get_blocking(pio0, 0))
+        {
+            temp=1;
+        }
+        if(temp){
             x = x_pos;
             y = y_pos;
             z = z_pos;
@@ -98,14 +103,14 @@ int main() {
             printf("X-pos: %f, Y-pos: %f, Z-pos: %f \n", x_pos, y_pos, z_pos);
             printf("Level = %d\n", level);
 
-            if(x - x_pos > 0)
+            if(x - x_pos > 0.05)
             {
                 gpio_put(OUTER_FWD,1);
                 gpio_put(INNER_FWD,1);
                 gpio_put(OUTER_BCK,0);
                 gpio_put(INNER_BCK,0);
             }
-            else if(x - x_pos < 0)
+            else if(x - x_pos < -0.05)
             {
                 gpio_put(OUTER_FWD,0);
                 gpio_put(INNER_FWD,0);
@@ -113,14 +118,14 @@ int main() {
                 gpio_put(INNER_BCK,1);
             }
             
-            if(y - y_pos > 0)
+            if(y - y_pos > 0.02)
             {
                 gpio_put(OUTER_FWD,1);
                 gpio_put(INNER_FWD,0);
                 gpio_put(OUTER_BCK,0);
                 gpio_put(INNER_BCK,1);
             }
-            else if(y - y_pos < 0 )
+            else if(y - y_pos < -0.02)
             {
                 gpio_put(OUTER_FWD,0);
                 gpio_put(INNER_FWD,1);
