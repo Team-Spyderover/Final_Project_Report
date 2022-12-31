@@ -18,8 +18,11 @@ Developer Visual Studio Code
 
 The project utilises 2 microntroller boards to realise the face detection and RC control functionality. The RP2040 QTPY board controllers the rc remote through analog voltages. The RP2040 PICO4ML board is primarily used to implement face detection functionality and generate the control signal to toggle QTPY.
 
-
+The following diagram shows the Block diagram of the proposed solution.
 ![WhatsApp Image 2022-12-30 at 00 19 16](https://user-images.githubusercontent.com/23244847/210039366-98ed0a18-cee8-42cf-ac72-204e229a8e43.jpg)
+
+The following digram shows the circuit of the entire system
+![circuit diagram](https://user-images.githubusercontent.com/23244847/210122196-f5509881-3119-4e64-a8f7-2ffc57134f4b.png)
 
 
 ### Code Breakdown for Control of RC circuitry and integration with IMU for gesture control
@@ -151,7 +154,7 @@ The project utilises 2 microntroller boards to realise the face detection and RC
 ```
 ### Code for generation of toggle signal to control QTPY from PICO4ML
 
-We adapted the code of ```mainfunctions.cpp``` in Pi inbuild person detection libraries to generate a toggle signal on pin 21 of pico4ml as soon as the score fo person face reaches 75 percent.
+We adapted the code of ```mainfunctions.cpp``` in Pi inbuild person detection libraries to generate a toggle signal on pin 21 of pico4ml as soon as the score for person face reaches 75 percent. If the score is grater than 75, the ```RESPONSE_PIN``` is written 1 or logic level HIGH otherwise , it is written to 0. Since the hardware capabalities are limited and it uses Tiny ML models to implement this feature, we wanted to avoid the load of the core present onboard so that it does no cause a stall. 
 
 ```
 #include "main_functions.h"
@@ -360,6 +363,8 @@ void loop() {
 }
 ```
 
+To select where toggle firing should be kept should be slected very carefully. Since the application of this feature is such, there are many interdependent functions present. in one of the implementations, the placement of firing function cause the oled display to hang indefinitely and subsequently the processor. Thus, care should be taken while working with tflmicro library.
+
 ### Offloading to PIO
 
 The incoming_signal toggle coming from PICO4ML board is a blocking statement for the functionality of our RP2040 QtPy which controls the RC circuitry of the remote control. Thus, to free up the processor, this control signal is fetched through PIO instead of the normal GPIO and directly used in the program.
@@ -387,6 +392,7 @@ static inline void input_program_init(PIO pio, uint sm, uint offset, uint pin) {
 }
 %}
 ```
+
 
 
 
